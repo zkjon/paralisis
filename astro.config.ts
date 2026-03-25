@@ -109,6 +109,11 @@ export default defineConfig({
               link: "/por-que-ocurre/",
               translations: { en: "overview" },
             },
+            {
+              label: "fases del sueño",
+              link: "/por-que-ocurre/fases-del-sueno/",
+              translations: { en: "sleep stages" },
+            },
           ],
         },
       ],
