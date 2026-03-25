@@ -98,6 +98,11 @@ export default defineConfig({
               link: "/que-es/caracteristicas/",
               translations: { en: "characteristics" },
             },
+            {
+              label: "tipos de parálisis",
+              link: "/que-es/tipos/",
+              translations: { en: "types of sleep paralysis" },
+            }
           ],
         },
         {
