@@ -46,6 +46,8 @@
 
   let utterance: SpeechSynthesisUtterance | null = null;
   let textoActual = "";
+  let colaLectura: string[] = [];
+  let indiceLectura = 0;
   let leyendo = false;
   let pausado = false;
 
@@ -53,13 +55,13 @@
     if (estado === "play") {
       iconoPlay.classList.remove("hidden");
       iconoPause.classList.add("hidden");
-      button.setAttribute("aria-label", "Leer página");
+      button.setAttribute("aria-label", "leer página");
     }
 
     if (estado === "pause") {
       iconoPlay.classList.add("hidden");
       iconoPause.classList.remove("hidden");
-      button.setAttribute("aria-label", "Pausar lectura");
+      button.setAttribute("aria-label", "pausar lectura");
     }
   }
 
@@ -110,6 +112,59 @@
       .trim();
   }
 
+  function dividirEnFrases(texto: string) {
+    return texto
+      .replace(/\s+/g, " ")
+      .split(/(?<=[.!?])\s+/)
+      .map((frase) => frase.trim())
+      .filter(Boolean);
+  }
+
+  function terminarLectura() {
+    leyendo = false;
+    pausado = false;
+    utterance = null;
+    colaLectura = [];
+    indiceLectura = 0;
+    mostrarIcono("play");
+  }
+
+  function leerSiguienteFragmento() {
+    if (pausado || indiceLectura >= colaLectura.length) {
+      if (!pausado) {
+        terminarLectura();
+      }
+      return;
+    }
+
+    const textoFragmento = colaLectura[indiceLectura];
+    utterance = new SpeechSynthesisUtterance(textoFragmento);
+    utterance.lang = "es-ES";
+    utterance.rate = 0.97;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    utterance.onstart = () => {
+      leyendo = true;
+      mostrarIcono("pause");
+    };
+
+    utterance.onend = () => {
+      if (pausado) return;
+      indiceLectura += 1;
+      // pequeña separación entre frases para reforzar la pausa del punto.
+      window.setTimeout(() => {
+        leerSiguienteFragmento();
+      }, 130);
+    };
+
+    utterance.onerror = () => {
+      terminarLectura();
+    };
+
+    speechSynthesis.speak(utterance);
+  }
+
   function iniciarLectura() {
     textoActual = obtenerTextoVisible();
 
@@ -118,34 +173,17 @@
       return;
     }
 
-    utterance = new SpeechSynthesisUtterance(textoActual);
-    utterance.lang = "es-ES";
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.volume = 1;
+    colaLectura = dividirEnFrases(textoActual);
+    indiceLectura = 0;
+    pausado = false;
 
-    utterance.onstart = () => {
-      leyendo = true;
-      pausado = false;
-      mostrarIcono("pause");
-    };
-
-    utterance.onend = () => {
-      leyendo = false;
-      pausado = false;
-      utterance = null;
-      mostrarIcono("play");
-    };
-
-    utterance.onerror = () => {
-      leyendo = false;
-      pausado = false;
-      utterance = null;
-      mostrarIcono("play");
-    };
+    if (!colaLectura.length) {
+      alert("No hay texto legible para leer.");
+      return;
+    }
 
     speechSynthesis.cancel();
-    speechSynthesis.speak(utterance);
+    leerSiguienteFragmento();
   }
 
   button.addEventListener("click", (e) => {
@@ -179,5 +217,6 @@
 
   window.addEventListener("beforeunload", () => {
     speechSynthesis.cancel();
+    terminarLectura();
   });
 </script>
