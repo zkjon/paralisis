@@ -38,6 +38,9 @@
 </button>
 
 <script>
+
+const isEnglish = navigator.language.startsWith("en");
+
 const button = document.getElementById("pulsar-para-leer") as HTMLButtonElement;
 const iconoPlay = document.getElementById("icono-play") as HTMLElement;
 const iconoPause = document.getElementById("icono-pause") as HTMLElement;
@@ -118,7 +121,8 @@ function leerSiguiente() {
   }
 
   const utt = new SpeechSynthesisUtterance(fragmento);
-  Object.assign(utt, { lang: "es-ES", rate: 0.97, pitch: 1, volume: 1 });
+    utt.lang = isEnglish ? "en-US" : "es-ES";
+    Object.assign(utt, { lang: utt.lang, rate: 0.97, pitch: 1, volume: 1 });
 
   utt.onstart = () => {
     estado.leyendo = true;
