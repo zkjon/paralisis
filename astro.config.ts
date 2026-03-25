@@ -138,6 +138,17 @@ export default defineConfig({
           ],
         },
         {
+          label: "prevalencia",
+          translations: { en: "prevalence" },
+          items: [
+            {
+              label: "datos y estadísticas",
+              link: "/prevalencia/datos/",
+              translations: { en: "data and statistics" },
+            },
+          ],
+        },
+        {
           label: "historia y cultura",
           translations: { en: "history and culture" },
           items: [
