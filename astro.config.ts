@@ -16,7 +16,7 @@ export const locales = {
 };
 
 const site = "https://paralisis.zkjon.dev";
-const ogUrl = new URL("og.jpg?v=1", site).href;
+const ogUrl = new URL("og-image.png?v=1", site).href;
 const ogImageAlt =
   "estudio completo sobre la parálisis del sueño: qué es, por qué ocurre, cómo se manifiesta y qué tipos de experiencias genera";
 
