@@ -63,6 +63,7 @@ export default defineConfig({
         },
       ],
       locales,
+      sidebar: []
     }),
   ],
   devToolbar: {
