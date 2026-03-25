@@ -93,6 +93,11 @@ export default defineConfig({
               link: "/que-es/definicion/",
               translations: { en: "definition" },
             },
+            {
+              label: "características",
+              link: "/que-es/caracteristicas/",
+              translations: { en: "characteristics" },
+            },
           ],
         },
       ],
