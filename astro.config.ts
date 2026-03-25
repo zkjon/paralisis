@@ -114,6 +114,11 @@ export default defineConfig({
               link: "/por-que-ocurre/fases-del-sueno/",
               translations: { en: "sleep stages" },
             },
+            {
+              label: "factores de riesgo",
+              link: "/por-que-ocurre/factores/",
+              translations: { en: "risk factors" },
+            },
           ],
         },
       ],
