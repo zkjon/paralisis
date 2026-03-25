@@ -26,7 +26,7 @@ export default defineConfig({
     sitemap(),
     starlight({
       title: "parálisis del sueño",
-      routeMiddleware: "./src/router-data.ts",
+      routeMiddleware: "@/router-data.ts",
       logo: {
         src: "~/icon.svg",
         replacesTitle: true,
