@@ -100,6 +100,17 @@ export default defineConfig({
             },
           ],
         },
+        {
+          label: "por qué ocurre",
+          translations: { en: "why it happens" },
+          items: [
+            {
+              label: "visión general",
+              link: "/por-que-ocurre/",
+              translations: { en: "overview" },
+            },
+          ],
+        },
       ],
     }),
   ],
