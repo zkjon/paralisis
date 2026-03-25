@@ -138,6 +138,22 @@ export default defineConfig({
           ],
         },
         {
+          label: "qué hacer",
+          translations: { en: "what to do" },
+          items: [
+            {
+              label: "durante el episodio",
+              link: "/que-hacer/durante/",
+              translations: { en: "during an episode" },
+            },
+            {
+              label: "reducir la frecuencia",
+              link: "/que-hacer/frecuencia/",
+              translations: { en: "reducing frequency" },
+            },
+          ],
+        },
+        {
           label: "prevalencia",
           translations: { en: "prevalence" },
           items: [
@@ -161,22 +177,6 @@ export default defineConfig({
               label: "representaciones culturales",
               link: "/historia-y-cultura/representaciones/",
               translations: { en: "cultural representations" },
-            },
-          ],
-        },
-        {
-          label: "qué hacer",
-          translations: { en: "what to do" },
-          items: [
-            {
-              label: "durante el episodio",
-              link: "/que-hacer/durante/",
-              translations: { en: "during an episode" },
-            },
-            {
-              label: "reducir la frecuencia",
-              link: "/que-hacer/frecuencia/",
-              translations: { en: "reducing frequency" },
             },
           ],
         },
