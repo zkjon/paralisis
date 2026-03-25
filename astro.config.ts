@@ -17,7 +17,8 @@ export const locales = {
 
 const site = "https://paralisisdelsueño.com";
 const ogUrl = new URL("og.jpg?v=1", site).href;
-const ogImageAlt = "estudio completo sobre la parálisis del sueño: qué es, por qué ocurre, cómo se manifiesta y qué tipos de experiencias genera";
+const ogImageAlt =
+  "estudio completo sobre la parálisis del sueño: qué es, por qué ocurre, cómo se manifiesta y qué tipos de experiencias genera";
 
 // https://astro.build/config
 export default defineConfig({
@@ -35,6 +36,9 @@ export default defineConfig({
         replacesTitle: true,
       },
       customCss: ["@/styles/global.css"],
+      components: {
+        PageTitle: "@/components/page-title.astro",
+      },
       social: [
         {
           icon: "github",
@@ -63,7 +67,15 @@ export default defineConfig({
         },
       ],
       locales,
-      sidebar: []
+      sidebar: [
+        {
+          label: "introducción",
+          translations: { en: "introduction" },
+          items: [
+            { label: "introducción", link: "/intro/" },
+          ],
+        },
+      ],
     }),
   ],
   devToolbar: {
