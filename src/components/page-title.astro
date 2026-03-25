@@ -1,11 +1,11 @@
 ---
-import Read from "@/components/read.astro";
+import Reader from "@/components/reader.astro";
 const PAGE_TITLE_ID = "_top";
 ---
 
 <div class="flex justify-between items-center">
 	<h1 id={PAGE_TITLE_ID}>{Astro.locals.starlightRoute.entry.data.title}</h1>
-	<Read for={PAGE_TITLE_ID} />
+	<Reader for={PAGE_TITLE_ID} />
 </div>
 
 <style>
