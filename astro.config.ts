@@ -17,7 +17,7 @@ export const locales = {
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://paralisisdelsueno.com",
+  site: "https://www.paralisisdelsueno.com",
   trailingSlash: "always",
   vite: {
     plugins: [tailwindcss()],
