@@ -97,7 +97,7 @@ export default defineConfig({
               label: "tipos de parálisis",
               link: "/que-es/tipos/",
               translations: { en: "types of sleep paralysis" },
-            }
+            },
           ],
         },
         {
@@ -118,6 +118,38 @@ export default defineConfig({
               label: "factores de riesgo",
               link: "/por-que-ocurre/factores/",
               translations: { en: "risk factors" },
+            },
+          ],
+        },
+        {
+          label: "durante el episodio",
+          translations: { en: "during the episode" },
+          items: [
+            {
+              label: "sensaciones físicas",
+              link: "/durante-el-episodio/sensaciones/",
+              translations: { en: "physical sensations" },
+            },
+            {
+              label: "alucinaciones",
+              link: "/durante-el-episodio/alucinaciones/",
+              translations: { en: "hallucinations" },
+            },
+          ],
+        },
+        {
+          label: "qué hacer",
+          translations: { en: "what to do" },
+          items: [
+            {
+              label: "durante el episodio",
+              link: "/que-hacer/durante/",
+              translations: { en: "during an episode" },
+            },
+            {
+              label: "reducir la frecuencia",
+              link: "/que-hacer/frecuencia/",
+              translations: { en: "reducing frequency" },
             },
           ],
         },
