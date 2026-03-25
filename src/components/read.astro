@@ -2,8 +2,7 @@
   id="pulsar-para-leer"
   type="button"
   class="w-12 h-12 rounded-full cursor-pointer flex items-center justify-center text-black dark:text-gray-200"
-  aria-label="Leer página"
->
+  aria-label="Leer página">
   <span id="icono-lectura" class="flex items-center justify-center">
     <!-- Icono hablar -->
     <svg
@@ -11,8 +10,7 @@
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 33.283 33.283"
       class="w-8 h-8"
-      aria-hidden="true"
-    >
+      aria-hidden="true">
       <path
         fill="currentColor"
         d="M3.805,8.964c-4.24,3.229-5.061,9.283-1.832,13.523s9.284,5.061,13.524,1.832
@@ -24,7 +22,7 @@
         c0,1.575-0.269,3.067-0.732,4.411l2.205,1.758c0.688-1.862,1.089-3.952,1.089-6.167C28.76,14.03,28.349,11.9,27.632,10.012z
         M29.476,23.25l2.203,1.758c1.021-2.612,1.604-5.574,1.604-8.719c0-3.139-0.584-6.095-1.601-8.705l-2.236,1.671
         c0.81,2.114,1.275,4.501,1.275,7.034C30.724,18.793,30.267,21.155,29.476,23.25z"
-      />
+      ></path>
     </svg>
 
     <!-- Icono pause -->
@@ -33,91 +31,95 @@
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       class="w-8 h-8 hidden"
-      aria-hidden="true"
-    >
-      <path
-        fill="currentColor"
-        d="M7 5h3v14H7zm7 0h3v14h-3z"
-      />
+      aria-hidden="true">
+      <path fill="currentColor" d="M7 5h3v14H7zm7 0h3v14h-3z"></path>
     </svg>
   </span>
 </button>
 
 <script>
-  const button = document.getElementById('pulsar-para-leer') as HTMLButtonElement;
-  const iconoPlay = document.getElementById('icono-play') as HTMLElement;
-  const iconoPause = document.getElementById('icono-pause') as HTMLElement;
+  const button = document.getElementById(
+    "pulsar-para-leer",
+  ) as HTMLButtonElement;
+  const iconoPlay = document.getElementById("icono-play") as HTMLElement;
+  const iconoPause = document.getElementById("icono-pause") as HTMLElement;
 
-  let utterance = null;
-  let textoActual = '';
+  let utterance: SpeechSynthesisUtterance | null = null;
+  let textoActual = "";
   let leyendo = false;
   let pausado = false;
 
-  function mostrarIcono(estado: 'play' | 'pause') {
-    if (estado === 'play') {
-      iconoPlay.classList.remove('hidden');
-      iconoPause.classList.add('hidden');
-      button.setAttribute('aria-label', 'Leer página');
+  function mostrarIcono(estado: "play" | "pause") {
+    if (estado === "play") {
+      iconoPlay.classList.remove("hidden");
+      iconoPause.classList.add("hidden");
+      button.setAttribute("aria-label", "Leer página");
     }
 
-    if (estado === 'pause') {
-      iconoPlay.classList.add('hidden');
-      iconoPause.classList.remove('hidden');
-      button.setAttribute('aria-label', 'Pausar lectura');
+    if (estado === "pause") {
+      iconoPlay.classList.add("hidden");
+      iconoPause.classList.remove("hidden");
+      button.setAttribute("aria-label", "Pausar lectura");
     }
   }
 
   function obtenerTextoVisible() {
-    const contenedor = document.querySelector('main, article, [role="main"]') || document.body;
+    const contenedor =
+      document.querySelector('main, article, [role="main"]') || document.body;
 
-    const elementosNoLeibles = ['SCRIPT', 'STYLE', 'NOSCRIPT', 'IFRAME', 'SVG'];
+    const elementosNoLeibles = ["SCRIPT", "STYLE", "NOSCRIPT", "IFRAME", "SVG"];
 
-    const walker = document.createTreeWalker(
-      contenedor,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode(node) {
-          const parent = node.parentElement;
-          if (!parent) return NodeFilter.FILTER_REJECT;
+    const walker = document.createTreeWalker(contenedor, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
 
-          if (elementosNoLeibles.includes(parent.tagName)) {
-            return NodeFilter.FILTER_REJECT;
-          }
-
-          const estilo = window.getComputedStyle(parent);
-          if (estilo.display === 'none' || estilo.visibility === 'hidden') {
-            return NodeFilter.FILTER_REJECT;
-          }
-
-          const texto = node.textContent != null ? node.textContent.trim() : '';
-          if (!texto) {
-            return NodeFilter.FILTER_REJECT;
-          }
-
-          return NodeFilter.FILTER_ACCEPT;
+        if (elementosNoLeibles.includes(parent.tagName)) {
+          return NodeFilter.FILTER_REJECT;
         }
-      }
-    );
 
-    let textoCompleto = '';
+        const estilo = window.getComputedStyle(parent);
+        if (estilo.display === "none" || estilo.visibility === "hidden") {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        const texto = node.textContent != null ? node.textContent.trim() : "";
+        if (!texto) {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+
+    const fragmentos: string[] = [];
 
     while (walker.nextNode()) {
-      textoCompleto += walker.currentNode.textContent != null ? walker.currentNode.textContent.trim() : '' + '. ';
+      const fragmento =
+        walker.currentNode.textContent?.replace(/\s+/g, " ").trim() || "";
+      if (fragmento) {
+        fragmentos.push(fragmento);
+      }
     }
 
-    return textoCompleto.trim();
+    return fragmentos
+      .join(" ")
+      .replace(/\s+([,.;:!?])/g, "$1")
+      .replace(/([,.;:!?])([^\s])/g, "$1 $2")
+      .replace(/\s{2,}/g, " ")
+      .trim();
   }
 
   function iniciarLectura() {
     textoActual = obtenerTextoVisible();
 
     if (!textoActual) {
-      alert('No hay texto para leer.');
+      alert("No hay texto para leer.");
       return;
     }
 
     utterance = new SpeechSynthesisUtterance(textoActual);
-    utterance.lang = 'es-ES';
+    utterance.lang = "es-ES";
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
@@ -125,32 +127,32 @@
     utterance.onstart = () => {
       leyendo = true;
       pausado = false;
-      mostrarIcono('pause');
+      mostrarIcono("pause");
     };
 
     utterance.onend = () => {
       leyendo = false;
       pausado = false;
       utterance = null;
-      mostrarIcono('play');
+      mostrarIcono("play");
     };
 
     utterance.onerror = () => {
       leyendo = false;
       pausado = false;
       utterance = null;
-      mostrarIcono('play');
+      mostrarIcono("play");
     };
 
     speechSynthesis.cancel();
     speechSynthesis.speak(utterance);
   }
 
-  button.addEventListener('click', (e) => {
+  button.addEventListener("click", (e) => {
     e.preventDefault();
 
-    if (!('speechSynthesis' in window)) {
-      alert('Tu navegador no soporta lectura en voz.');
+    if (!("speechSynthesis" in window)) {
+      alert("Tu navegador no soporta lectura en voz.");
       return;
     }
 
@@ -162,20 +164,20 @@
     if (leyendo && !pausado) {
       speechSynthesis.pause();
       pausado = true;
-      mostrarIcono('play');
-      button.setAttribute('aria-label', 'Continuar lectura');
+      mostrarIcono("play");
+      button.setAttribute("aria-label", "Continuar lectura");
       return;
     }
 
     if (pausado) {
       speechSynthesis.resume();
       pausado = false;
-      mostrarIcono('pause');
+      mostrarIcono("pause");
       return;
     }
   });
 
-  window.addEventListener('beforeunload', () => {
+  window.addEventListener("beforeunload", () => {
     speechSynthesis.cancel();
   });
 </script>
