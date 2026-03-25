@@ -88,6 +88,11 @@ export default defineConfig({
               link: "/que-es/",
               translations: { en: "overview" },
             },
+            {
+              label: "definición",
+              link: "/que-es/definicion/",
+              translations: { en: "definition" },
+            },
           ],
         },
       ],
