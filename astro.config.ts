@@ -69,10 +69,25 @@ export default defineConfig({
       locales,
       sidebar: [
         {
-          label: "introducción",
-          translations: { en: "introduction" },
+          label: "bienvenida",
+          translations: { en: "welcome" },
           items: [
-            { label: "introducción", link: "/intro/" },
+            {
+              label: "introducción",
+              link: "/intro/",
+              translations: { en: "introduction" },
+            },
+          ],
+        },
+        {
+          label: "qué es la parálisis del sueño",
+          translations: { en: "what is sleep paralysis" },
+          items: [
+            {
+              label: "visión general",
+              link: "/que-es/",
+              translations: { en: "overview" },
+            },
           ],
         },
       ],
