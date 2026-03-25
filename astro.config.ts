@@ -138,6 +138,22 @@ export default defineConfig({
           ],
         },
         {
+          label: "historia y cultura",
+          translations: { en: "history and culture" },
+          items: [
+            {
+              label: "interpretaciones históricas",
+              link: "/historia-y-cultura/interpretaciones/",
+              translations: { en: "historical interpretations" },
+            },
+            {
+              label: "representaciones culturales",
+              link: "/historia-y-cultura/representaciones/",
+              translations: { en: "cultural representations" },
+            },
+          ],
+        },
+        {
           label: "qué hacer",
           translations: { en: "what to do" },
           items: [
