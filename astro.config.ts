@@ -16,7 +16,7 @@ export const locales = {
 };
 
 const site = "https://paralisis.zkjon.dev";
-const ogUrl = new URL("og-image.png?v=1", site).href;
+const ogUrl = new URL("og-image.png", site).href;
 const ogImageAlt =
   "estudio completo sobre la parálisis del sueño: qué es, por qué ocurre, cómo se manifiesta y qué tipos de experiencias genera";
 
@@ -31,6 +31,7 @@ export default defineConfig({
     sitemap(),
     starlight({
       title: "parálisis del sueño",
+      routeMiddleware: "./src/router-data.ts",
       logo: {
         src: "~/icon.svg",
         replacesTitle: true,
@@ -49,21 +50,6 @@ export default defineConfig({
           icon: "instagram",
           label: "instagram",
           href: "https://instagram.com/zkjon",
-        },
-      ],
-
-      head: [
-        {
-          tag: "meta",
-          attrs: { property: "og:image", content: ogUrl },
-        },
-        {
-          tag: "meta",
-          attrs: { name: "twitter:image", content: ogUrl },
-        },
-        {
-          tag: "meta",
-          attrs: { property: "og:image:alt", content: ogImageAlt },
         },
       ],
       locales,
