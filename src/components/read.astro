@@ -39,7 +39,7 @@
 
 <script>
 
-const isEnglish = navigator.language.startsWith("en");
+const isEnglish = location.pathname.startsWith("/en");
 
 const button = document.getElementById("pulsar-para-leer") as HTMLButtonElement;
 const iconoPlay = document.getElementById("icono-play") as HTMLElement;
