@@ -84,13 +84,8 @@ export default defineConfig({
           translations: { en: "what is sleep paralysis" },
           items: [
             {
-              label: "visión general",
-              link: "/que-es/",
-              translations: { en: "overview" },
-            },
-            {
               label: "definición",
-              link: "/que-es/definicion/",
+              link: "/que-es/",
               translations: { en: "definition" },
             },
             {
