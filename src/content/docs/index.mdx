@@ -18,6 +18,30 @@ hero:
       link: /que-es/
 ---
 
-import About from '@/components/about.astro' 
+import { CardGrid, Card } from '@astrojs/starlight/components';
 
-<About/>
+<CardGrid stagger>
+	<Card title="¿qué es la parálisis del sueño?" icon="open-book">
+		descubre en qué consiste este fenómeno donde la mente despierta, pero el cuerpo permanece inmóvil entre el sueño y la realidad.
+	</Card>
+
+	<Card title="¿por qué ocurre?" icon="rocket">
+		explora las causas neurológicas y el papel del sueño rem en este desajuste entre cerebro y cuerpo.
+	</Card>
+
+	<Card title="tipos de experiencias" icon="document">
+		conoce las diferentes formas en las que se manifiesta: presencia, presión en el pecho o sensaciones extracorporales.
+	</Card>
+
+	<Card title="cómo afrontarla" icon="puzzle">
+		aprende qué hacer durante un episodio y cómo reducir su frecuencia mediante hábitos y comprensión del fenómeno.
+	</Card>
+</CardGrid>
+
+<br class="mt-20"/>
+
+---
+
+<center>
+  &copy; 2026 paralisis del sueño - presentado por **[jon imanol ruiz hermoso](https://zkjon.dev)**
+</center>
