@@ -38,185 +38,139 @@
 </button>
 
 <script>
-  const button = document.getElementById(
-    "pulsar-para-leer",
-  ) as HTMLButtonElement;
-  const iconoPlay = document.getElementById("icono-play") as HTMLElement;
-  const iconoPause = document.getElementById("icono-pause") as HTMLElement;
+const button = document.getElementById("pulsar-para-leer") as HTMLButtonElement;
+const iconoPlay = document.getElementById("icono-play") as HTMLElement;
+const iconoPause = document.getElementById("icono-pause") as HTMLElement;
 
-  let utterance: SpeechSynthesisUtterance | null = null;
-  let textoActual = "";
-  let colaLectura: string[] = [];
-  let indiceLectura = 0;
-  let leyendo = false;
-  let pausado = false;
+// constantes
+const SALTO_LINEA = "__SALTO_LINEA__";
+const PAUSA_SALTO_MS = 280;
+const PAUSA_FRASE_MS = 130;
 
-  function mostrarIcono(estado: "play" | "pause") {
-    if (estado === "play") {
-      iconoPlay.classList.remove("hidden");
-      iconoPause.classList.add("hidden");
-      button.setAttribute("aria-label", "leer página");
-    }
+// estado centralizado
+const estado = {
+  cola: [] as string[],
+  indice: 0,
+  leyendo: false,
+  pausado: false,
+};
 
-    if (estado === "pause") {
-      iconoPlay.classList.add("hidden");
-      iconoPause.classList.remove("hidden");
-      button.setAttribute("aria-label", "pausar lectura");
-    }
-  }
+// ui
+function actualizarUI(modo: "play" | "pause") {
+  const esPlay = modo === "play";
+  iconoPlay.classList.toggle("hidden", !esPlay);
+  iconoPause.classList.toggle("hidden", esPlay);
+  button.setAttribute(
+    "aria-label",
+    esPlay ? (estado.pausado ? "Continuar lectura" : "Leer página") : "Pausar lectura"
+  );
+}
 
-  function obtenerTextoVisible() {
-    const contenedor =
-      document.querySelector('main, article, [role="main"]') || document.body;
+// texto
+function obtenerTextoVisible(): string {
+  const contenedor =
+    (document.querySelector('main, article, [role="main"]') as HTMLElement)
+    ?? document.body;
 
-    const elementosNoLeibles = ["SCRIPT", "STYLE", "NOSCRIPT", "IFRAME", "SVG"];
+  return contenedor.innerText
+    .replace(/\u00A0/g, " ")
+    .replace(/\r/g, "")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
 
-    const walker = document.createTreeWalker(contenedor, NodeFilter.SHOW_TEXT, {
-      acceptNode(node) {
-        const parent = node.parentElement;
-        if (!parent) return NodeFilter.FILTER_REJECT;
+function dividirEnFrases(texto: string): string[] {
+  return texto
+    .split(/\n+/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .flatMap((linea, i, arr) => {
+      const frases = linea
+        .replace(/\s+/g, " ")
+        .split(/(?<=[.!?])\s+/)
+        .map((f) => f.trim())
+        .filter(Boolean);
 
-        if (elementosNoLeibles.includes(parent.tagName)) {
-          return NodeFilter.FILTER_REJECT;
-        }
-
-        const estilo = window.getComputedStyle(parent);
-        if (estilo.display === "none" || estilo.visibility === "hidden") {
-          return NodeFilter.FILTER_REJECT;
-        }
-
-        const texto = node.textContent != null ? node.textContent.trim() : "";
-        if (!texto) {
-          return NodeFilter.FILTER_REJECT;
-        }
-
-        return NodeFilter.FILTER_ACCEPT;
-      },
+      return i < arr.length - 1 ? [...frases, SALTO_LINEA] : frases;
     });
+}
 
-    const fragmentos: string[] = [];
+// motor de lectura
+function terminar() {
+  speechSynthesis.cancel();
+  Object.assign(estado, { cola: [], indice: 0, leyendo: false, pausado: false });
+  actualizarUI("play");
+}
 
-    while (walker.nextNode()) {
-      const fragmento =
-        walker.currentNode.textContent?.replace(/\s+/g, " ").trim() || "";
-      if (fragmento) {
-        fragmentos.push(fragmento);
-      }
-    }
-
-    return fragmentos
-      .join(" ")
-      .replace(/\s+([,.;:!?])/g, "$1")
-      .replace(/([,.;:!?])([^\s])/g, "$1 $2")
-      .replace(/\s{2,}/g, " ")
-      .trim();
+function leerSiguiente() {
+  if (estado.pausado || estado.indice >= estado.cola.length) {
+    if (!estado.pausado) terminar();
+    return;
   }
 
-  function dividirEnFrases(texto: string) {
-    return texto
-      .replace(/\s+/g, " ")
-      .split(/(?<=[.!?])\s+/)
-      .map((frase) => frase.trim())
-      .filter(Boolean);
+  const fragmento = estado.cola[estado.indice];
+
+  if (fragmento === SALTO_LINEA) {
+    estado.indice++;
+    setTimeout(leerSiguiente, PAUSA_SALTO_MS);
+    return;
   }
 
-  function terminarLectura() {
-    leyendo = false;
-    pausado = false;
-    utterance = null;
-    colaLectura = [];
-    indiceLectura = 0;
-    mostrarIcono("play");
+  const utt = new SpeechSynthesisUtterance(fragmento);
+  Object.assign(utt, { lang: "es-ES", rate: 0.97, pitch: 1, volume: 1 });
+
+  utt.onstart = () => {
+    estado.leyendo = true;
+    actualizarUI("pause");
+  };
+
+  utt.onend = () => {
+    if (estado.pausado) return;
+    estado.indice++;
+    setTimeout(leerSiguiente, PAUSA_FRASE_MS);
+  };
+
+  utt.onerror = terminar;
+
+  speechSynthesis.speak(utt);
+}
+
+function iniciar() {
+  const texto = obtenerTextoVisible();
+  const cola = dividirEnFrases(texto);
+
+  if (!cola.length) {
+    alert("no hay texto legible para leer.");
+    return;
   }
 
-  function leerSiguienteFragmento() {
-    if (pausado || indiceLectura >= colaLectura.length) {
-      if (!pausado) {
-        terminarLectura();
-      }
-      return;
-    }
+  speechSynthesis.cancel();
+  Object.assign(estado, { cola, indice: 0, pausado: false });
+  leerSiguiente();
+}
 
-    const textoFragmento = colaLectura[indiceLectura];
-    utterance = new SpeechSynthesisUtterance(textoFragmento);
-    utterance.lang = "es-ES";
-    utterance.rate = 0.97;
-    utterance.pitch = 1;
-    utterance.volume = 1;
+// eventos
+button.addEventListener("click", (e) => {
+  e.preventDefault();
 
-    utterance.onstart = () => {
-      leyendo = true;
-      mostrarIcono("pause");
-    };
-
-    utterance.onend = () => {
-      if (pausado) return;
-      indiceLectura += 1;
-      // pequeña separación entre frases para reforzar la pausa del punto.
-      window.setTimeout(() => {
-        leerSiguienteFragmento();
-      }, 130);
-    };
-
-    utterance.onerror = () => {
-      terminarLectura();
-    };
-
-    speechSynthesis.speak(utterance);
+  if (!("speechSynthesis" in window)) {
+    alert("tu navegador no soporta lectura en voz.");
+    return;
   }
 
-  function iniciarLectura() {
-    textoActual = obtenerTextoVisible();
+  if (!estado.leyendo && !estado.pausado) return iniciar();
 
-    if (!textoActual) {
-      alert("No hay texto para leer.");
-      return;
-    }
-
-    colaLectura = dividirEnFrases(textoActual);
-    indiceLectura = 0;
-    pausado = false;
-
-    if (!colaLectura.length) {
-      alert("No hay texto legible para leer.");
-      return;
-    }
-
-    speechSynthesis.cancel();
-    leerSiguienteFragmento();
+  if (!estado.pausado) {
+    speechSynthesis.pause();
+    estado.pausado = true;
+    actualizarUI("play");
+  } else {
+    speechSynthesis.resume();
+    estado.pausado = false;
+    actualizarUI("pause");
   }
+});
 
-  button.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    if (!("speechSynthesis" in window)) {
-      alert("Tu navegador no soporta lectura en voz.");
-      return;
-    }
-
-    if (!leyendo && !pausado) {
-      iniciarLectura();
-      return;
-    }
-
-    if (leyendo && !pausado) {
-      speechSynthesis.pause();
-      pausado = true;
-      mostrarIcono("play");
-      button.setAttribute("aria-label", "Continuar lectura");
-      return;
-    }
-
-    if (pausado) {
-      speechSynthesis.resume();
-      pausado = false;
-      mostrarIcono("pause");
-      return;
-    }
-  });
-
-  window.addEventListener("beforeunload", () => {
-    speechSynthesis.cancel();
-    terminarLectura();
-  });
+window.addEventListener("beforeunload", terminar);
 </script>
