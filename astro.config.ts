@@ -15,14 +15,9 @@ export const locales = {
   },
 };
 
-const site = "https://paralisis.zkjon.dev";
-const ogUrl = new URL("og-image.png", site).href;
-const ogImageAlt =
-  "estudio completo sobre la parálisis del sueño: qué es, por qué ocurre, cómo se manifiesta y qué tipos de experiencias genera";
-
 // https://astro.build/config
 export default defineConfig({
-  site,
+  site: "https://paralisis.zkjon.dev",
   trailingSlash: "always",
   vite: {
     plugins: [tailwindcss()],
